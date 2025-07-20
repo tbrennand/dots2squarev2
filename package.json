@@ -1,0 +1,32 @@
+{
+  "name": "dots-to-squares",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "firebase": "^9.6.10",
+    "pinia": "^2.0.13",
+    "vue": "^3.2.33",
+    "vue-router": "^4.0.14"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/test-utils": "^2.0.0-rc.20",
+    "autoprefixer": "^10.4.5",
+    "cypress": "^9.5.4",
+    "jsdom": "^19.0.0",
+    "postcss": "^8.4.12",
+    "tailwindcss": "^3.0.23",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
+    "vitest": "^0.28.4",
+    "vue-tsc": "^2.0.21",
+    "@types/node": "^20.0.0"
+  }
+}
