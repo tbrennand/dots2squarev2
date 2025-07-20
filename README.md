@@ -44,16 +44,25 @@ npm install
 
 ### 3. Set Up Firebase
 
-This project uses Firebase for its backend. You will need to create your own Firebase project to get the necessary credentials.
+This project uses Firebase for its backend and loads the necessary credentials from environment variables. You will need to create your own Firebase project and a local environment file to run the application.
 
-1.  Go to the [Firebase Console](https://console.firebase.google.com/).
-2.  Create a new project.
-3.  In your project, create a new Web App.
-4.  You will be given a Firebase configuration object. Copy these credentials.
-5.  In the project's source code, navigate to `src/firebase/index.ts`.
-6.  Replace the placeholder `firebaseConfig` object with your own credentials.
+1. Go to the [Firebase Console](https://console.firebase.google.com/).
+2. Create a new project.
+3. In your project, create a new Web App.
+4. You will be given a Firebase configuration object. Copy these credentials.
+5. In the root of your project, create a new file named `.env.local`.
+6. Add your Firebase credentials to this file in the following format:
 
-**Note**: For production, it is highly recommended to store these credentials in environment variables rather than hard-coding them.
+```env
+VITE_FIREBASE_API_KEY="YOUR_API_KEY"
+VITE_FIREBASE_AUTH_DOMAIN="YOUR_AUTH_DOMAIN"
+VITE_FIREBASE_PROJECT_ID="YOUR_PROJECT_ID"
+VITE_FIREBASE_STORAGE_BUCKET="YOUR_STORAGE_BUCKET"
+VITE_FIREBASE_MESSAGING_SENDER_ID="YOUR_MESSAGING_SENDER_ID"
+VITE_FIREBASE_APP_ID="YOUR_APP_ID"
+```
+
+**Important**: The `.env.local` file is included in `.gitignore` and should never be committed to your repository. When you deploy to a hosting service like Vercel, you will need to add these as environment variables in the project settings on that platform.
 
 ### 4. Run the Development Server
 
