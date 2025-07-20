@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
+
+
 import { getFirestore, doc, setDoc, onSnapshot, updateDoc, collection, addDoc, getDoc, increment } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
@@ -32,7 +34,7 @@ interface Match {
 }
 
 // Type definition for user statistics
-interface UserStats {
+export interface UserStats {
   wins: number;
   losses: number;
   ties: number;

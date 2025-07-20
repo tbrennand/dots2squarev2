@@ -52,7 +52,7 @@ function startTurnTimer() {
       await updateMatch(matchStore.matchId!, { currentPlayer: newPlayer });
 
       // If the next player is the AI, force its move immediately
-      if (newPlayer === AI_PLAYER_ID) {
+      if (newPlayer && newPlayer === AI_PLAYER_ID) {
         isAITurnForced = true;
         // Use a short timeout to allow the UI to update to show it's the AI's turn
         setTimeout(() => makeAIMove(), 200);
