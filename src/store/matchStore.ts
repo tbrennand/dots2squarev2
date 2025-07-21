@@ -10,6 +10,7 @@ export const useMatchStore = defineStore('match', {
     state: 'lobby' as 'lobby' | 'in-progress' | 'finished',
     winner: null as string | null,
     playerColors: {} as Record<string, string>,
+    playerNames: {} as Record<string, string>,
   }),
   actions: {
     setMatch(id: string) {
@@ -22,6 +23,7 @@ export const useMatchStore = defineStore('match', {
       this.state = gameState.state ?? this.state;
       this.winner = gameState.winner ?? this.winner;
       this.playerColors = gameState.playerColors ?? this.playerColors;
+      this.playerNames = gameState.playerNames ?? this.playerNames;
       this.gridSize = gameState.gridSize ?? this.gridSize;
     },
   },

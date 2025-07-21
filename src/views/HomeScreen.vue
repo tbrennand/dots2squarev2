@@ -1,24 +1,51 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { createMatch, updateMatch } from '@/firebase';
 import { useUserStore } from '@/store/userStore';
+import NameInput from '@/components/NameInput.vue';
+import { getRandomAIName } from '@/utils/aiNames';
 
 const router = useRouter();
 const userStore = useUserStore();
 const joinMatchId = ref('');
 const selectedSize = ref(6); // Default size
+const firebaseAvailable = ref(true); // Assume available by default
+const showNameInput = ref(false);
 
 const SIZES = [6, 8, 10];
+
+// Check if user needs to enter their name
+const needsNameInput = computed(() => {
+  return !userStore.username || userStore.username === 'Guest';
+});
+
+// Check Firebase availability
+onMounted(async () => {
+  // Test Firebase by trying to create a match
+  const testMatchId = await createMatch('test-user', 'Test User', 6);
+  firebaseAvailable.value = testMatchId !== null;
+  
+  // Show name input if user hasn't set their name
+  if (needsNameInput.value) {
+    showNameInput.value = true;
+  }
+});
+
+function onNameSubmitted(name: string) {
+  showNameInput.value = false;
+}
 
 async function createGame() {
   if (!userStore.userId) {
     alert('User not initialized. Please refresh.');
     return;
   }
-  const matchId = await createMatch(userStore.userId, selectedSize.value);
+  const matchId = await createMatch(userStore.userId, userStore.username, selectedSize.value);
   if (matchId) {
     router.push(`/lobby/${matchId}`);
+  } else {
+    alert('Failed to create game. Multiplayer features are not available without Firebase configuration.');
   }
 }
 
@@ -27,11 +54,16 @@ async function createAIGame() {
     alert('User not initialized. Please refresh.');
     return;
   }
-  const matchId = await createMatch(userStore.userId, selectedSize.value);
+  const matchId = await createMatch(userStore.userId, userStore.username, selectedSize.value);
   if (matchId) {
     const aiPlayerId = 'AI-Player';
+    const aiName = getRandomAIName();
     await updateMatch(matchId, {
       players: [userStore.userId, aiPlayerId],
+      playerNames: {
+        [userStore.userId]: userStore.username,
+        [aiPlayerId]: aiName
+      },
       playerColors: {
         [userStore.userId]: '#4F46E5', // Indigo for human
         [aiPlayerId]: '#E11D48', // Rose for AI
@@ -40,6 +72,8 @@ async function createAIGame() {
       currentPlayer: userStore.userId,
     });
     router.push(`/game/${matchId}`);
+  } else {
+    alert('Failed to create AI game. Multiplayer features are not available without Firebase configuration.');
   }
 }
 
@@ -52,8 +86,17 @@ function joinGame() {
 
 <template>
   <div class="bg-gray-800 text-white min-h-screen flex flex-col justify-center items-center p-4 font-sans">
+    <!-- Name Input Overlay -->
+    <div v-if="showNameInput" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <NameInput @name-submitted="onNameSubmitted" />
+    </div>
+    
     <div class="w-full max-w-md mx-auto bg-gray-900 rounded-2xl shadow-lg p-8 text-center">
       <h1 class="text-5xl font-bold text-cyan-400 tracking-wider mb-6">Dots & Squares</h1>
+      
+      <div v-if="userStore.username && userStore.username !== 'Guest'" class="mb-4">
+        <p class="text-gray-300 text-lg">Welcome, <span class="text-cyan-400 font-semibold">{{ userStore.username }}</span>!</p>
+      </div>
 
       <div class="mb-6">
         <h2 class="text-lg font-semibold text-gray-300 mb-3">Choose Grid Size</h2>
@@ -68,6 +111,12 @@ function joinGame() {
             {{ size }}x{{ size }}
           </button>
         </div>
+      </div>
+      
+      <div v-if="!firebaseAvailable" class="mb-4 p-3 bg-yellow-900 border border-yellow-600 rounded-lg">
+        <p class="text-yellow-300 text-sm">
+          ⚠️ Multiplayer features are disabled. Firebase configuration is required for online play.
+        </p>
       </div>
       
       <div class="space-y-4">

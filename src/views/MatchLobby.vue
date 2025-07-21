@@ -14,6 +14,7 @@ const players = ref<string[]>([]);
 const matchState = ref<'lobby' | 'in-progress' | 'finished'>('lobby');
 const inviteStatusMessage = ref('');
 const playerColors = ref<Record<string, string>>({});
+const playerNames = ref<Record<string, string>>({});
 
 const AVAILABLE_COLORS = ['#4F46E5', '#E11D48', '#10B981', '#F59E0B']; // Indigo, Rose, Emerald, Amber
 
@@ -22,7 +23,8 @@ let unsubscribe = () => {};
 async function joinMatch() {
   if (!userStore.userId) return;
   await updateMatch(gameId.value, {
-    players: arrayUnion(userStore.userId)
+    players: arrayUnion(userStore.userId),
+    [`playerNames.${userStore.userId}`]: userStore.username
   });
 }
 
@@ -77,6 +79,7 @@ onMounted(() => {
     if (data) {
       players.value = data.players || [];
       playerColors.value = data.playerColors || {};
+      playerNames.value = data.playerNames || {};
       matchState.value = data.state;
 
       // Assign color to the current player if they don't have one yet
@@ -133,7 +136,7 @@ watch(matchState, (newState) => {
           <li v-for="player in players" :key="player" class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
             <div class="flex items-center gap-4">
               <span class="w-5 h-5 rounded-full border-2 border-gray-700" :style="{ backgroundColor: playerColors[player] || '#4A5568' }"></span>
-              <span class="font-medium truncate">{{ player }}</span>
+              <span class="font-medium truncate">{{ playerNames[player] || player }}</span>
             </div>
             <span class="text-green-400 font-semibold">Ready</span>
           </li>

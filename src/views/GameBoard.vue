@@ -242,7 +242,7 @@ async function handleLineAdded(lineId: string) {
             :class="matchStore.currentPlayer === player ? 'shadow-lg' : ''"
             :style="{ backgroundColor: matchStore.playerColors[player] || '#2D3748' }"
           >
-            <p class="text-sm font-semibold truncate">{{ player }}</p>
+            <p class="text-sm font-semibold truncate">{{ matchStore.playerNames[player] || player }}</p>
             <p class="text-2xl font-bold">{{ matchStore.scores[player] || 0 }}</p>
           </div>
         </div>
@@ -266,7 +266,7 @@ async function handleLineAdded(lineId: string) {
           Your Turn!
         </div>
         <div v-else class="text-lg text-yellow-400">
-          Waiting for {{ matchStore.currentPlayer }}...
+          Waiting for {{ matchStore.playerNames[matchStore.currentPlayer] || matchStore.currentPlayer }}...
         </div>
         <div class="text-5xl font-mono mt-2 tracking-widest">{{ turnTimer }}</div>
       </footer>
@@ -278,6 +278,7 @@ async function handleLineAdded(lineId: string) {
       :winner="winner"
       :scores="matchStore.scores"
       :players="matchStore.players"
+      :player-names="matchStore.playerNames"
       :player-colors="matchStore.playerColors"
       :lines="boardStore.lines"
       :squares="boardStore.squares"

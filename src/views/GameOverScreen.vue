@@ -9,6 +9,7 @@ const props = defineProps<{
   winner: string | null;
   scores: Record<string, number>;
   players: string[];
+  playerNames: Record<string, string>;
   playerColors: Record<string, string>;
   lines: Map<string, string>;
   squares: Map<string, string>;
@@ -46,7 +47,7 @@ const sortedPlayers = computed(() => {
 const gameOverMessage = computed(() => {
   if (props.winner === 'tie') return "It's a Tie!";
   if (props.winner === userStore.userId) return 'You Won!';
-  if (props.winner) return `${props.winner} Wins!`;
+  if (props.winner) return `${props.playerNames[props.winner] || props.winner} Wins!`;
   return 'Game Over';
 });
 
@@ -71,7 +72,7 @@ const handlePlayAgain = () => {
             <li v-for="player in sortedPlayers" :key="player" class="flex items-center justify-between bg-gray-700 p-4 rounded-lg">
               <div class="flex items-center gap-4">
                 <span class="w-5 h-5 rounded-full border-2" :style="{ backgroundColor: playerColors[player] || '#4A5568', borderColor: player === winner ? '#FBBF24' : '#4A5568' }"></span>
-                <span class="font-medium truncate">{{ player === userStore.userId ? 'You' : player }}</span>
+                <span class="font-medium truncate">{{ player === userStore.userId ? 'You' : (playerNames[player] || player) }}</span>
               </div>
               <div class="text-right">
                 <span class="text-2xl font-bold" :style="{ color: playerColors[player] || '#FFFFFF' }">{{ scores[player] || 0 }}</span>
